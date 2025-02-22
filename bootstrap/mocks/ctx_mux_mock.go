@@ -1,4 +1,4 @@
-package bootstrap
+package mocks
 
 import (
 	"bytes"
@@ -7,17 +7,18 @@ import (
 	"net/http"
 	"net/http/httptest"
 
+	"github.com/sing3demons/go-backend-clean-architecture/bootstrap"
 	"go.uber.org/zap"
 )
 
 type FakeHttpContext struct {
 	Res *httptest.ResponseRecorder
 	Req *http.Request
-	cfg *KafkaConfig
-	log ILogger
+	cfg *bootstrap.KafkaConfig
+	log bootstrap.ILogger
 }
 
-func NewMockMuxContext(method string, url string, body any) *FakeHttpContext {
+func NewMockMuxContext(body any) *FakeHttpContext {
 	var buf *bytes.Buffer
 	if body != nil {
 		jsonData, _ := json.Marshal(body)
@@ -26,15 +27,15 @@ func NewMockMuxContext(method string, url string, body any) *FakeHttpContext {
 		buf = &bytes.Buffer{}
 	}
 
-	req := httptest.NewRequest(method, url, buf)
+	req := httptest.NewRequest(http.MethodOptions, "/api", buf)
 	req.Header.Set("Content-Type", "application/json")
 
 	// Create response recorder
 	rec := httptest.NewRecorder()
 
 	// Create mock dependencies
-	mockCfg := &KafkaConfig{}
-	mockLog := NewZapLogger(zap.NewNop())
+	mockCfg := &bootstrap.KafkaConfig{}
+	mockLog := bootstrap.NewZapLogger(zap.NewNop())
 
 	return &FakeHttpContext{
 		Res: rec,
@@ -55,11 +56,11 @@ func (c *FakeHttpContext) Context() context.Context {
 	return c.Req.Context()
 }
 
-func (c *FakeHttpContext) SendMessage(topic string, message any, opts ...OptionProducerMsg) (RecordMetadata, error) {
-	return producer(c.cfg.producer, topic, message, opts...)
+func (c *FakeHttpContext) SendMessage(topic string, message any, opts ...bootstrap.OptionProducerMsg) (bootstrap.RecordMetadata, error) {
+	return bootstrap.RecordMetadata{}, nil
 }
 
-func (c *FakeHttpContext) Log() ILogger {
+func (c *FakeHttpContext) Log() bootstrap.ILogger {
 	return c.log
 }
 
@@ -68,13 +69,13 @@ func (c *FakeHttpContext) Query(name string) string {
 }
 
 func (c *FakeHttpContext) Param(name string) string {
-	v := c.Req.Context().Value(ContextKey(name))
+	v := c.Req.Context().Value(bootstrap.ContextKey(name))
 	var value string
 	switch v := v.(type) {
 	case string:
 		value = v
 	}
-	c.Req = c.Req.WithContext(context.WithValue(c.Req.Context(), ContextKey(name), nil))
+	c.Req = c.Req.WithContext(context.WithValue(c.Req.Context(), bootstrap.ContextKey(name), nil))
 	return value
 }
 

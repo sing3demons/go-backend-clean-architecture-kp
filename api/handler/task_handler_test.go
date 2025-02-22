@@ -3,12 +3,11 @@ package handler
 import (
 	"context"
 	"errors"
-	"net/http"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/sing3demons/go-backend-clean-architecture/bootstrap"
+	bootstrap "github.com/sing3demons/go-backend-clean-architecture/bootstrap/mocks"
 	"github.com/sing3demons/go-backend-clean-architecture/domain"
 	"github.com/sing3demons/go-backend-clean-architecture/domain/mocks"
 	"github.com/sing3demons/go-backend-clean-architecture/usecase"
@@ -34,7 +33,7 @@ func TestTaskHandler(t *testing.T) {
 
 		handler := NewTaskHandler(service)
 
-		c := bootstrap.NewMockMuxContext(http.MethodPost, "/test?query=value", body)
+		c := bootstrap.NewMockMuxContext(body)
 
 		if err := handler.CreateTask(c); err != nil {
 			t.Error("Error")
@@ -55,7 +54,7 @@ func TestTaskHandler(t *testing.T) {
 
 		handler := NewTaskHandler(service)
 
-		c := bootstrap.NewMockMuxContext(http.MethodPost, "/test?query=value", nil)
+		c := bootstrap.NewMockMuxContext(nil)
 
 		if err := handler.CreateTask(c); err != nil {
 			t.Error("Error")
@@ -80,7 +79,7 @@ func TestTaskHandler(t *testing.T) {
 
 		handler := NewTaskHandler(service)
 
-		c := bootstrap.NewMockMuxContext(http.MethodPost, "/test", modelsTask)
+		c := bootstrap.NewMockMuxContext(modelsTask)
 
 		if err := handler.CreateTask(c); err != nil {
 			t.Error("Error")
@@ -107,7 +106,7 @@ func TestTaskHandler(t *testing.T) {
 
 		handler := NewTaskHandler(service)
 
-		c := bootstrap.NewMockMuxContext(http.MethodGet, "/test", nil)
+		c := bootstrap.NewMockMuxContext(nil)
 
 		if err := handler.GetTask(c); err != nil {
 			t.Error("Error")
@@ -120,14 +119,14 @@ func TestTaskHandler(t *testing.T) {
 	})
 
 	t.Run("Get Task Fail", func(t *testing.T) {
-		expectedError := errors.New("failed to fetch task")
-
-		service := new(usecase.MockTaskUsecase)
-		service.On("FetchAll", mock.Anything).Return([]domain.Task{}, expectedError)
+		// expectedError := errors.New("failed to fetch task")
+		// service := new(usecase.MockTaskUsecase)
+		// service.On("FetchAll", mock.Anything).Return([]domain.Task{}, expectedError)
+		service := CreateTaskFail()
 
 		handler := NewTaskHandler(service)
 
-		c := bootstrap.NewMockMuxContext(http.MethodGet, "/test", nil)
+		c := bootstrap.NewMockMuxContext(nil)
 
 		if err := handler.GetTask(c); err != nil {
 			t.Error("Error")
@@ -138,4 +137,36 @@ func TestTaskHandler(t *testing.T) {
 		assert.Equal(t, expected, actual)
 	})
 
+}
+
+type fakeService struct{}
+
+func (f fakeService) FetchAll(c context.Context) ([]domain.Task, error) {
+	return nil, errors.New("failed to fetch task")
+}
+
+func (f fakeService) FetchByTaskID(c context.Context, taskID string) (domain.Task, error) {
+	return domain.Task{}, nil
+}
+
+func (f fakeService) FetchByUserID(c context.Context, userID string) ([]domain.Task, error) {
+	return nil, nil
+}
+
+func (f fakeService) Create(c context.Context, task *domain.Task) error {
+	return nil
+}
+
+func (f fakeService) FetchAllByUserID(c context.Context, userID string) ([]domain.Task, error) {
+	return nil, nil
+}
+
+func (f fakeService) Update(c context.Context, task *domain.Task) error {
+	return nil
+}
+
+func CreateTaskFail() fakeService {
+	f := fakeService{}
+
+	return f
 }

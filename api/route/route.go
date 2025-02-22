@@ -6,8 +6,6 @@ import (
 )
 
 func Setup(db mongo.Database, collection string, router bootstrap.IApplication) bootstrap.IApplication {
-
 	NewTaskRoute(db, collection, router)
-
 	return router
 }
