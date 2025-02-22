@@ -65,6 +65,7 @@ const (
 	None Router = iota
 	Gin
 	Mux
+	Echo
 	Fiber
 )
 
@@ -96,6 +97,8 @@ func NewApplication(config *Config, logger ILogger) IApplication {
 		switch config.AppConfig.Router {
 		case Gin:
 			router = newGinServer(config, logger)
+		case Echo:
+			router = newEchoServer(config, logger)
 		default:
 			router = newServer(config, logger)
 		}

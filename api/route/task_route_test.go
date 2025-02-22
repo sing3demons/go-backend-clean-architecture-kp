@@ -1,6 +1,7 @@
 package route
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -59,6 +60,14 @@ func (d *DB) Find(documents interface{}) *mocks.Database {
 	return d.DatabaseSuccess()
 }
 
+func (d *DB) Create(document interface{}) *mocks.Database {
+	d.collection = &mocks.Collection{}
+	mockTaskTD := primitive.NewObjectID()
+	d.collection.On("InsertOne", mock.Anything, mock.AnythingOfType(d.GetTypeString(document))).Return(mockTaskTD, nil).Once()
+
+	return d.DatabaseSuccess()
+}
+
 type MockContext struct {
 	path   string
 	method string
@@ -74,6 +83,12 @@ func NewMockContext() *MockContext {
 func (m *MockContext) Get(path string) {
 	m.path = path
 	m.method = http.MethodGet
+}
+
+func (m *MockContext) Post(path string, body io.Reader) {
+	m.path = path
+	m.method = http.MethodPost
+	m.body = body
 }
 
 func (m MockContext) NewContext() (*http.Request, *httptest.ResponseRecorder) {
@@ -92,12 +107,13 @@ func (m *MockContext) Response() *httptest.ResponseRecorder {
 }
 
 func TestTaskApi(t *testing.T) {
+	server := bootstrap.NewApplication(&bootstrap.Config{
+		AppConfig: bootstrap.AppConfig{
+			Port: "3000",
+		},
+	}, bootstrap.NewZapLogger(zap.NewNop()))
+
 	t.Run("Test Task API", func(t *testing.T) {
-		server := bootstrap.NewApplication(&bootstrap.Config{
-			AppConfig: bootstrap.AppConfig{
-				Port: "3000",
-			},
-		}, bootstrap.NewZapLogger(zap.NewNop()))
 
 		databaseHelper := newMockDatabase()
 
@@ -129,6 +145,39 @@ func TestTaskApi(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.Equal(t, expected, actual)
+	})
+
+	t.Run("TASK POST", func(t *testing.T) {
+		databaseHelper := newMockDatabase()
+
+		id, _ := primitive.ObjectIDFromHex("67b998e4d5b0121df1966470")
+
+		task := domain.Task{
+			ID:    id,
+			Title: "title",
+		}
+
+		body := domain.Task{
+			Title: "title",
+		}
+		jsonData, _ := json.Marshal(&body)
+		db := databaseHelper.Create(&task)
+
+		router := Setup(db, databaseHelper.collectionName(), server)
+
+		c := NewMockContext()
+		c.Post("/task", bytes.NewBuffer(jsonData))
+
+		rec := c.Response()
+
+		router.ServeHTTP(rec, c.Request())
+		assert.Equal(t, http.StatusOK, rec.Code)
+
+		actual := domain.Task{}
+		err := json.Unmarshal(rec.Body.Bytes(), &actual)
+		assert.NoError(t, err)
+
+		assert.Equal(t, http.StatusOK, rec.Code)
 	})
 
 }

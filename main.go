@@ -15,6 +15,7 @@ func main() {
 	server := bootstrap.NewApplication(&bootstrap.Config{
 		AppConfig: bootstrap.AppConfig{
 			Port: "3000",
+			Router: bootstrap.Gin,
 		},
 		KafkaConfig: bootstrap.KafkaConfig{
 			Brokers: []string{"localhost:29092"},
