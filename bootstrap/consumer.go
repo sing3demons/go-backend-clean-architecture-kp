@@ -75,6 +75,20 @@ func (ctx *kafkaContext) Query(name string) string {
 	return ""
 }
 
+func (ctx *kafkaContext) SetHeader(key, value string) {
+	if ctx.headers == nil {
+		ctx.headers = make(map[string]string)
+	}
+	ctx.headers[key] = value
+}
+
+func (ctx *kafkaContext) GetHeader(key string) string {
+	if ctx.headers == nil {
+		return ""
+	}
+	return ctx.headers[key]
+}
+
 func (ctx *kafkaContext) ReadInput(data any) error {
 	const errMsgFormat = "%s, payload: %s"
 	val := reflect.ValueOf(data)

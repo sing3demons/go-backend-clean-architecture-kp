@@ -45,3 +45,11 @@ func (c *EchoContext) ReadInput(data any) error {
 func (c *EchoContext) Response(code int, data any) error {
 	return c.ctx.JSON(code, data)
 }
+
+func (c *EchoContext) SetHeader(key, value string) {
+	c.ctx.Response().Header().Set(key, value)
+}
+
+func (c *EchoContext) GetHeader(key string) string {
+	return c.ctx.Request().Header.Get(key)
+}

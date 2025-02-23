@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 
 	"github.com/sing3demons/go-backend-clean-architecture/bootstrap"
 	"go.uber.org/zap"
@@ -18,17 +19,53 @@ type FakeHttpContext struct {
 	log bootstrap.ILogger
 }
 
-func NewMockMuxContext(body any) *FakeHttpContext {
+type Option struct {
+	Body   any
+	Query  map[string]string
+	Params map[string]string
+	Header map[string]string
+}
+
+func NewMockMuxContext(opts ...Option) *FakeHttpContext {
+	opt := &Option{}
+	if len(opts) > 0 {
+		opt = &opts[0]
+	}
+
+	// Create request
 	var buf *bytes.Buffer
-	if body != nil {
-		jsonData, _ := json.Marshal(body)
+	if opt.Body != nil {
+		jsonData, _ := json.Marshal(opt.Body)
 		buf = bytes.NewBuffer(jsonData)
 	} else {
 		buf = &bytes.Buffer{}
 	}
 
 	req := httptest.NewRequest(http.MethodOptions, "/api", buf)
-	req.Header.Set("Content-Type", "application/json")
+
+	if opt.Query != nil {
+		u := url.Values{}
+		for k, v := range opt.Query {
+			u.Set(k, v)
+		}
+		req.URL.RawQuery = u.Encode()
+	}
+
+	if opt.Params != nil {
+		ctx := req.Context()
+		for k, v := range opt.Params {
+			ctx = context.WithValue(ctx, bootstrap.ContextKey(k), v)
+		}
+		req = req.WithContext(ctx)
+	}
+
+	if opt.Header != nil {
+		for k, v := range opt.Header {
+			req.Header.Set(k, v)
+		}
+	} else {
+		req.Header.Set("Content-Type", "application/json")
+	}
 
 	// Create response recorder
 	rec := httptest.NewRecorder()
@@ -90,4 +127,16 @@ func (c *FakeHttpContext) Response(responseCode int, responseData any) error {
 
 	err := json.NewEncoder(c.Res).Encode(responseData)
 	return err
+}
+
+func (c *FakeHttpContext) SetHeader(key, value string) {
+	if value == "" {
+		c.Res.Header().Del(key)
+		return
+	}
+	c.Res.Header().Set(key, value)
+}
+
+func (c *FakeHttpContext) GetHeader(key string) string {
+	return c.Req.Header.Get(key)
 }

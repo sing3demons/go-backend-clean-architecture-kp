@@ -64,3 +64,15 @@ func (c *HttpContext) Response(responseCode int, responseData any) error {
 	err := json.NewEncoder(c.w).Encode(responseData)
 	return err
 }
+
+func (c *HttpContext) SetHeader(key, value string) {
+	if value == "" {
+		c.w.Header().Del(key)
+		return
+	}
+	c.w.Header().Set(key, value)
+}
+
+func (c *HttpContext) GetHeader(key string) string {
+	return c.r.Header.Get(key)
+}

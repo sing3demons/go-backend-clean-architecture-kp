@@ -33,7 +33,9 @@ func TestTaskHandler(t *testing.T) {
 
 		handler := NewTaskHandler(service)
 
-		c := bootstrap.NewMockMuxContext(body)
+		c := bootstrap.NewMockMuxContext(bootstrap.Option{
+			Body: body,
+		})
 
 		if err := handler.CreateTask(c); err != nil {
 			t.Error("Error")
@@ -54,7 +56,7 @@ func TestTaskHandler(t *testing.T) {
 
 		handler := NewTaskHandler(service)
 
-		c := bootstrap.NewMockMuxContext(nil)
+		c := bootstrap.NewMockMuxContext()
 
 		if err := handler.CreateTask(c); err != nil {
 			t.Error("Error")
@@ -79,7 +81,9 @@ func TestTaskHandler(t *testing.T) {
 
 		handler := NewTaskHandler(service)
 
-		c := bootstrap.NewMockMuxContext(modelsTask)
+		c := bootstrap.NewMockMuxContext(bootstrap.Option{
+			Body: modelsTask,
+		})
 
 		if err := handler.CreateTask(c); err != nil {
 			t.Error("Error")
@@ -106,7 +110,7 @@ func TestTaskHandler(t *testing.T) {
 
 		handler := NewTaskHandler(service)
 
-		c := bootstrap.NewMockMuxContext(nil)
+		c := bootstrap.NewMockMuxContext()
 
 		if err := handler.GetTask(c); err != nil {
 			t.Error("Error")
@@ -126,7 +130,7 @@ func TestTaskHandler(t *testing.T) {
 
 		handler := NewTaskHandler(service)
 
-		c := bootstrap.NewMockMuxContext(nil)
+		c := bootstrap.NewMockMuxContext()
 
 		if err := handler.GetTask(c); err != nil {
 			t.Error("Error")

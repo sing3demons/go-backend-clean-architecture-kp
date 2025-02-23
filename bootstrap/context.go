@@ -4,6 +4,8 @@ import "context"
 
 type IContext interface {
 	Context() context.Context
+	SetHeader(key, value string)
+	GetHeader(key string) string
 
 	Log() ILogger
 	Param(name string) string

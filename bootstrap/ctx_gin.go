@@ -46,3 +46,11 @@ func (c *GinContext) Response(responseCode int, responseData any) error {
 	c.ctx.JSON(responseCode, responseData)
 	return nil
 }
+
+func (c *GinContext) SetHeader(key, value string) {
+	c.ctx.Header(key, value)
+}
+
+func (c *GinContext) GetHeader(key string) string {
+	return c.ctx.GetHeader(key)
+}

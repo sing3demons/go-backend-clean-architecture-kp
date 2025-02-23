@@ -107,13 +107,13 @@ func (m *MockContext) Response() *httptest.ResponseRecorder {
 }
 
 func TestTaskApi(t *testing.T) {
-	server := bootstrap.NewApplication(&bootstrap.Config{
-		AppConfig: bootstrap.AppConfig{
-			Port: "3000",
-		},
-	}, bootstrap.NewZapLogger(zap.NewNop()))
 
 	t.Run("Test Task API", func(t *testing.T) {
+		server := bootstrap.NewApplication(&bootstrap.Config{
+			AppConfig: bootstrap.AppConfig{
+				Port: "3000",
+			},
+		}, bootstrap.NewZapLogger(zap.NewNop()))
 
 		databaseHelper := newMockDatabase()
 
@@ -148,6 +148,11 @@ func TestTaskApi(t *testing.T) {
 	})
 
 	t.Run("TASK POST", func(t *testing.T) {
+		server := bootstrap.NewApplication(&bootstrap.Config{
+			AppConfig: bootstrap.AppConfig{
+				Port: "3000",
+			},
+		}, bootstrap.NewZapLogger(zap.NewNop()))
 		databaseHelper := newMockDatabase()
 
 		id, _ := primitive.ObjectIDFromHex("67b998e4d5b0121df1966470")
