@@ -34,7 +34,12 @@ func (c *HttpContext) SendMessage(topic string, message any, opts ...OptionProdu
 }
 
 func (c *HttpContext) Log() ILogger {
-	return c.log
+	switch logger := c.Context().Value(key).(type) {
+	case ILogger:
+		return logger
+	default:
+		return c.log
+	}
 }
 
 func (c *HttpContext) Query(name string) string {

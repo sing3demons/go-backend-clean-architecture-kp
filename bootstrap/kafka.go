@@ -64,6 +64,10 @@ func (s *KafkaServer) Shutdown() {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
+	if s.client == nil {
+		return
+	}
+
 	s.log.Println("Closing Kafka consumer...")
 	if err := s.client.Close(); err != nil {
 		s.log.Printf("Error closing Kafka consumer: %v", err)

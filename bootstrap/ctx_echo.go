@@ -14,7 +14,8 @@ type EchoContext struct {
 
 func newEchoContext(c echo.Context, cfg *KafkaConfig, log ILogger) IContext {
 	ctx := InitSession(c.Request().Context(), log)
-	c.Request().WithContext(ctx)
+	pc := c.Request().WithContext(ctx)
+	c.SetRequest(pc)
 	return &EchoContext{ctx: c, cfg: cfg, log: log}
 }
 
@@ -27,7 +28,12 @@ func (c *EchoContext) SendMessage(topic string, message any, opts ...OptionProdu
 }
 
 func (c *EchoContext) Log() ILogger {
-	return c.log
+	switch logger := c.Context().Value(key).(type) {
+	case ILogger:
+		return logger
+	default:
+		return c.log
+	}
 }
 
 func (c *EchoContext) Query(name string) string {

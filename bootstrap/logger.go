@@ -29,7 +29,7 @@ type ILogger interface {
 	WithName(name string)
 	Println(v ...any)
 
-	L(c context.Context) ILogger
+	// L(c context.Context) ILogger
 	Session(v string) ILogger
 }
 
@@ -122,7 +122,6 @@ func (l *Logger) L(c context.Context) ILogger {
 	default:
 		return l
 	}
-
 }
 
 func NewZapLogger(log *zap.Logger) ILogger {

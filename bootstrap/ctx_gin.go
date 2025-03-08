@@ -27,7 +27,12 @@ func (c *GinContext) SendMessage(topic string, message any, opts ...OptionProduc
 }
 
 func (c *GinContext) Log() ILogger {
-	return c.log
+	switch logger := c.Context().Value(key).(type) {
+	case ILogger:
+		return logger
+	default:
+		return c.log
+	}
 }
 
 func (c *GinContext) Query(name string) string {

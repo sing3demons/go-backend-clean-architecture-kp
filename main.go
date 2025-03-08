@@ -14,7 +14,7 @@ func main() {
 	logger := bootstrap.NewZapLogger(bootstrap.NewAppLogger())
 	server := bootstrap.NewApplication(&bootstrap.Config{
 		AppConfig: bootstrap.AppConfig{
-			Port: "3000",
+			Port:   "3000",
 			Router: bootstrap.Gin,
 		},
 		KafkaConfig: bootstrap.KafkaConfig{
@@ -45,7 +45,7 @@ func main() {
 	route.Setup(db, "task", server)
 
 	server.Get("/", func(ctx bootstrap.IContext) error {
-		log := ctx.Log().L(ctx.Context())
+		log := ctx.Log()
 		name := ctx.Param("name")
 
 		log.Info(fmt.Sprintf("Request with name: %s", name))
@@ -55,7 +55,7 @@ func main() {
 			return ctx.Response(http.StatusOK, fmt.Sprintf("Hello, %s!", name))
 		}
 
-		ctx.SendMessage("my-topic", "Hello, World!")
+		// ctx.SendMessage("my-topic", "Hello, World!")
 		return ctx.Response(http.StatusOK, "Hello, World!")
 	})
 
