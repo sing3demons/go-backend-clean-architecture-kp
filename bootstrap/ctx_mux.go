@@ -66,8 +66,7 @@ func (c *HttpContext) Response(responseCode int, responseData any) error {
 
 	c.w.WriteHeader(responseCode)
 
-	err := json.NewEncoder(c.w).Encode(responseData)
-	return err
+	return json.NewEncoder(c.w).Encode(responseData)
 }
 
 func (c *HttpContext) SetHeader(key, value string) {

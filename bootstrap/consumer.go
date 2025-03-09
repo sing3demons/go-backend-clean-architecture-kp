@@ -56,15 +56,21 @@ func NewConsumerContext(topic, body string, producer sarama.SyncProducer, log IL
 	}
 }
 
-func (ctx *kafkaContext) Context() context.Context {
-	if ctx.ctx != nil {
-		return ctx.ctx
+func (c *kafkaContext) Context() context.Context {
+	if c.ctx != nil {
+		return c.ctx
 	}
 	return context.Background()
 }
 
 func (ctx *kafkaContext) Log() ILogger {
-	return ctx.Logger
+	switch logger := ctx.Context().Value(key).(type) {
+	case ILogger:
+		return logger
+	default:
+		return ctx.Logger
+	}
+
 }
 
 func (ctx kafkaContext) Param(name string) string {

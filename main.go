@@ -55,23 +55,23 @@ func main() {
 			return ctx.Response(http.StatusOK, fmt.Sprintf("Hello, %s!", name))
 		}
 
-		// ctx.SendMessage("my-topic", "Hello, World!")
+		ctx.SendMessage("my-topic", "Hello, World!")
 		return ctx.Response(http.StatusOK, "Hello, World!")
 	})
 
-	// server.Consume("my-topic", func(ctx bootstrap.IContext) error {
-	// 	log := ctx.Log().L(ctx.Context())
-	// 	var body any
-	// 	if err := ctx.ReadInput(&body); err != nil {
-	// 		return err
-	// 	}
+	server.Consume("my-topic", func(ctx bootstrap.IContext) error {
+		log := ctx.Log()
+		var body any
+		if err := ctx.ReadInput(&body); err != nil {
+			return err
+		}
 
-	// 	log.Info(fmt.Sprintf("my-topic message: %v", body))
-	// 	log.Info("========== my-topic ===========")
+		log.Info(fmt.Sprintf("my-topic message: %v", body))
+		log.Info("========== my-topic ===========")
 
-	// 	// ctx.Log().Info(fmt.Sprintf("my-topic message: %v", body))
-	// 	return nil
-	// })
+		// ctx.Log().Info(fmt.Sprintf("my-topic message: %v", body))
+		return nil
+	})
 
 	// server.Consume("test", func(ctx bootstrap.IContext) error {
 	// 	var body any

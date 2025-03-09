@@ -29,7 +29,6 @@ type ILogger interface {
 	WithName(name string)
 	Println(v ...any)
 
-	// L(c context.Context) ILogger
 	Session(v string) ILogger
 }
 
@@ -87,7 +86,7 @@ const (
 	xSession        ContextKey = "session"
 	ContentType                = "Content-Type"
 	ContentTypeJSON            = "application/json"
-	key                        = "logger"
+	key             ContextKey = "logger"
 	Summary                    = "Summary"
 	Detail                     = "Detail"
 )
@@ -142,7 +141,7 @@ func (l Logger) Session(v string) ILogger {
 	log := l.log.With(zap.String("session", v))
 	l.log = log
 	return &Logger{
-		log: log,
+		log: l.log,
 	}
 }
 
