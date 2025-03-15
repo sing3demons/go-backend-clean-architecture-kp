@@ -19,17 +19,7 @@ type KafkaServer struct {
 	log      ILogger
 }
 
-func NewKafkaServer(options *KafkaConfig, log ILogger) (*KafkaServer, error) {
-	producer, err := newProducer(options)
-	if err != nil {
-		return nil, err
-	}
-
-	client, err := newConsumer(options)
-	if err != nil {
-		return nil, err
-	}
-
+func NewKafkaServer(producer sarama.SyncProducer, client sarama.ConsumerGroup, options *KafkaConfig, log ILogger) (*KafkaServer, error) {
 	return &KafkaServer{
 		client:   client,
 		producer: producer,

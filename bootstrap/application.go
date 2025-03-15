@@ -80,7 +80,17 @@ func NewApplication(config *Config, logger ILogger) IApplication {
 	kafka := &KafkaServer{}
 
 	if len(config.KafkaConfig.Brokers) != 0 {
-		k, err := NewKafkaServer(&config.KafkaConfig, logger)
+		producer, err := newProducer(&config.KafkaConfig)
+		if err != nil {
+			logger.Fatalf("Failed to create Kafka consumer: %v", err)
+
+		}
+
+		client, err := newConsumer(&config.KafkaConfig)
+		if err != nil {
+			logger.Fatalf("Failed to create Kafka consumer: %v", err)
+		}
+		k, err := NewKafkaServer(producer, client, &config.KafkaConfig, logger)
 		if err != nil {
 			logger.Fatalf("Failed to create Kafka server: %v", err)
 		}
