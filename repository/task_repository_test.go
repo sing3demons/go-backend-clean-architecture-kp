@@ -36,7 +36,7 @@ func TestTaskRepositoryCreate(t *testing.T) {
 		databaseHelper.On("Collection", collectionName).Return(collectionHelper).Once()
 
 		repo := repository.NewTaskRepository(databaseHelper, collectionName)
-		err := repo.Create(nil, mockTask)
+		err := repo.Create(context.TODO(), mockTask)
 
 		assert.NoError(t, err)
 
@@ -48,7 +48,7 @@ func TestTaskRepositoryCreate(t *testing.T) {
 		databaseHelper.On("Collection", collectionName).Return(collectionHelper).Once()
 
 		repo := repository.NewTaskRepository(databaseHelper, collectionName)
-		err := repo.Create(nil, mockEmptyTask)
+		err := repo.Create(context.TODO(), mockEmptyTask)
 
 		assert.Error(t, err)
 

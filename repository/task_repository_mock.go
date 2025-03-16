@@ -1,17 +1,17 @@
-package mocks
+package repository
 
 import (
 	"context"
 
 	"github.com/sing3demons/go-backend-clean-architecture/domain"
-	mock "github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/mock"
 )
 
-type TaskRepository struct {
+type MockTaskRepository struct {
 	mock.Mock
 }
 
-func (_m *TaskRepository) Create(c context.Context, task *domain.Task) error {
+func (_m *MockTaskRepository) Create(c context.Context, task *domain.Task) error {
 	ret := _m.Called(c, task)
 
 	var r0 error
@@ -24,7 +24,7 @@ func (_m *TaskRepository) Create(c context.Context, task *domain.Task) error {
 	return r0
 }
 
-func (_m *TaskRepository) FetchAll(c context.Context) ([]domain.Task, error) {
+func (_m *MockTaskRepository) FetchAll(c context.Context) ([]domain.Task, error) {
 	ret := _m.Called(c)
 
 	var r0 []domain.Task
@@ -47,7 +47,7 @@ func (_m *TaskRepository) FetchAll(c context.Context) ([]domain.Task, error) {
 	return r0, r1
 }
 
-func (_m *TaskRepository) FetchByUserID(c context.Context, userID string) ([]domain.Task, error) {
+func (_m *MockTaskRepository) FetchByUserID(c context.Context, userID string) ([]domain.Task, error) {
 	ret := _m.Called(c, userID)
 
 	var r0 []domain.Task
@@ -69,7 +69,7 @@ func (_m *TaskRepository) FetchByUserID(c context.Context, userID string) ([]dom
 	return r0, r1
 }
 
-func (_m *TaskRepository) FetchByTaskID(c context.Context, taskID string) (domain.Task, error) {
+func (_m *MockTaskRepository) FetchByTaskID(c context.Context, taskID string) (domain.Task, error) {
 	ret := _m.Called(c, taskID)
 
 	var r0 domain.Task
@@ -91,13 +91,8 @@ func (_m *TaskRepository) FetchByTaskID(c context.Context, taskID string) (domai
 	return r0, r1
 }
 
-type mockConstructorTestingTNewTaskRepository interface {
-	mock.TestingT
-	Cleanup(func())
-}
-
-func NewTaskRepository() *TaskRepository {
-	m := &TaskRepository{}
+func NewMockTaskRepository() *MockTaskRepository {
+	m := &MockTaskRepository{}
 	m.On("Create", mock.Anything, mock.Anything).Return(nil)
 	m.On("FetchAll", mock.Anything).Return([]domain.Task{}, nil)
 	m.On("FetchByUserID", mock.Anything, mock.Anything).Return([]domain.Task{}, nil)

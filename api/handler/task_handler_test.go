@@ -9,7 +9,7 @@ import (
 
 	bootstrap "github.com/sing3demons/go-backend-clean-architecture/bootstrap/mocks"
 	"github.com/sing3demons/go-backend-clean-architecture/domain"
-	"github.com/sing3demons/go-backend-clean-architecture/domain/mocks"
+	"github.com/sing3demons/go-backend-clean-architecture/repository"
 	"github.com/sing3demons/go-backend-clean-architecture/usecase"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -19,7 +19,7 @@ import (
 func TestTaskHandler(t *testing.T) {
 	t.Run("Create Task", func(t *testing.T) {
 		timeout := time.Duration(2) * time.Second
-		repo := mocks.NewTaskRepository()
+		repo := repository.NewMockTaskRepository()
 
 		id, _ := primitive.ObjectIDFromHex("67b998e4d5b0121df1966470")
 
@@ -50,7 +50,7 @@ func TestTaskHandler(t *testing.T) {
 
 	t.Run("ReadInput Task Fail", func(t *testing.T) {
 		timeout := time.Duration(2) * time.Second
-		repo := mocks.NewTaskRepository()
+		repo := repository.NewMockTaskRepository()
 
 		service := usecase.NewTaskUsecase(repo, timeout)
 
@@ -96,7 +96,7 @@ func TestTaskHandler(t *testing.T) {
 
 	t.Run("Get Task", func(t *testing.T) {
 		timeout := time.Duration(2) * time.Second
-		repo := mocks.NewTaskRepository()
+		repo := repository.NewMockTaskRepository()
 
 		id, _ := primitive.ObjectIDFromHex("67b998e4d5b0121df1966470")
 

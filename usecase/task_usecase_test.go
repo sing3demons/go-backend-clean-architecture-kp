@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/sing3demons/go-backend-clean-architecture/domain"
-	"github.com/sing3demons/go-backend-clean-architecture/domain/mocks"
+	"github.com/sing3demons/go-backend-clean-architecture/repository"
 	"github.com/sing3demons/go-backend-clean-architecture/usecase"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -15,7 +15,7 @@ import (
 )
 
 func TestFetchByUserId(t *testing.T) {
-	mockTaskRepository := new(mocks.TaskRepository)
+	mockTaskRepository := new(repository.MockTaskRepository)
 	userObjectID := primitive.NewObjectID()
 	userID := userObjectID.Hex()
 
@@ -57,7 +57,7 @@ func TestFetchByUserId(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	mockTaskRepository := new(mocks.TaskRepository)
+	mockTaskRepository := new(repository.MockTaskRepository)
 
 	t.Run("success", func(t *testing.T) {
 		mockTask := domain.Task{
@@ -96,7 +96,7 @@ func TestCreate(t *testing.T) {
 }
 
 func TestFetchByTaskID(t *testing.T) {
-	mockTaskRepository := new(mocks.TaskRepository)
+	mockTaskRepository := new(repository.MockTaskRepository)
 	taskObjectID := primitive.NewObjectID()
 	taskID := taskObjectID.Hex()
 
