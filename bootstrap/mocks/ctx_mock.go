@@ -94,7 +94,11 @@ func (c *FakeHttpContext) Context() context.Context {
 }
 
 func (c *FakeHttpContext) SendMessage(topic string, message any, opts ...bootstrap.OptionProducerMsg) (bootstrap.RecordMetadata, error) {
-	return bootstrap.RecordMetadata{}, nil
+	return bootstrap.RecordMetadata{
+		TopicName: topic,
+		Offset:    0,
+		Partition: 0,
+	}, nil
 }
 
 func (c *FakeHttpContext) Log() bootstrap.ILogger {
