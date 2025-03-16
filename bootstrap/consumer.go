@@ -29,6 +29,9 @@ type OptionProducerMsg struct {
 }
 
 func newConsumer(option *KafkaConfig) (sarama.ConsumerGroup, error) {
+	if option.consumer != nil {
+		return option.consumer, nil
+	}
 	config := sarama.NewConfig()
 	config.Consumer.Group.Rebalance.Strategy = sarama.NewBalanceStrategyRange()
 	config.Consumer.Offsets.Initial = sarama.OffsetOldest

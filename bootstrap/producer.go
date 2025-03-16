@@ -19,6 +19,10 @@ type RecordMetadata struct {
 }
 
 func newProducer(option *KafkaConfig) (sarama.SyncProducer, error) {
+	if option.producer != nil {
+		return option.producer, nil
+	}
+
 	config := sarama.NewConfig()
 	config.Producer.Return.Successes = true
 	config.Producer.Return.Errors = true

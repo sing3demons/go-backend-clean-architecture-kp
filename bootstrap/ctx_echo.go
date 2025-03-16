@@ -45,7 +45,7 @@ func (c *EchoContext) Param(name string) string {
 }
 
 func (c *EchoContext) ReadInput(data any) error {
-	return c.ctx.Bind(data)
+	return c.ctx.Bind(&data)
 }
 
 func (c *EchoContext) Response(code int, data any) error {

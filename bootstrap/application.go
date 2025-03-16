@@ -15,6 +15,10 @@ import (
 type IApplication interface {
 	Get(path string, handler HandleFunc, middlewares ...Middleware)
 	Post(path string, handler HandleFunc, middlewares ...Middleware)
+	Put(path string, handler HandleFunc, middlewares ...Middleware)
+	Delete(path string, handler HandleFunc, middlewares ...Middleware)
+	Patch(path string, handler HandleFunc, middlewares ...Middleware)
+
 	Use(middlewares ...Middleware)
 	Start()
 	ServeHTTP(w http.ResponseWriter, r *http.Request)
@@ -46,6 +50,7 @@ type KafkaConfig struct {
 	Password string
 
 	producer sarama.SyncProducer
+	consumer sarama.ConsumerGroup
 }
 
 type KafkaProducerOptions struct {
