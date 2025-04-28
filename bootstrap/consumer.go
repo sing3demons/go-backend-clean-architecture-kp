@@ -77,6 +77,9 @@ func (ctx *kafkaContext) Log() ILogger {
 }
 
 func (ctx kafkaContext) Param(name string) string {
+	if name == "topic" {
+		return ctx.topic
+	}
 	return ""
 }
 
